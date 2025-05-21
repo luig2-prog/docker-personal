@@ -174,6 +174,365 @@ docker container rm <container_id or name>
 **rm**: Command to remove a container. It deletes the container from your local machine. You can only remove stopped containers, so make sure to stop the container first if it is running.
 **<container_id or name>**: The ID or name of the container you want to remove. You can find the container ID or name using the `docker ps` command.
 
+## docker container run vs docker run
+
+The `docker container run` command is a more explicit way to run a container, while `docker run` is a shorthand version. Both commands achieve the same result, but `docker container run` is more verbose and can be used to clarify the context of the command.
+
+docker run es un alias de docker container run. Por lo tanto, ambos comandos son equivalentes y producen el mismo resultado.
+
+```bash
+docker container run -p 8080:80 -d --name my-httpd httpd:2.4
+```
+Is the same as:
+
+```bash
+docker run -p 8080:80 -d --name my-httpd httpd:2.4
+```
+
+`docker container ls` is an alias for `docker ps`. Both commands list the running containers, but `docker container ls` is more explicit and can be used to clarify the context of the command.
+
+```bash
+docker container ls
+```
+Is the same as:
+
+```bash
+docker ps
+```
+
+## stop | Detener
+
+```bash
+docker stop <container_id|container_name>
+```
+
+**docker stop**: Command to stop a running container. It sends a SIGTERM signal to the container, allowing it to gracefully shut down. If the container does not stop within a certain time (default is 10 seconds), Docker sends a SIGKILL signal to forcefully terminate it.
+
+## Start | Iniciar
+
+```bash
+docker start <container_id|container_name>
+```
+**docker start**: Command to start a stopped container. It starts the container and runs the command specified in the Dockerfile or the command used to create the container.
+
+
+## Interactive mode | Modo interactivo
+
+```bash
+docker exec container_id|container_name command
+```
+**docker exec**: Command to run a command in a running container. It allows you to execute commands inside the container's environment.
+**container_id|container_name**: The ID or name of the container where you want to run the command. You can find the container ID or name using the `docker ps` command.
+**command**: The command you want to run inside the container. This can be any command that is available in the container's environment.
+
+To interact with a container and execute commands into container, you can use the `-it` option when running the container. This option combines two flags:
+- `-i`: Keeps STDIN open even if not attached. This allows you to send input to the container.
+- `-t`: Allocates a pseudo-TTY. This creates a terminal interface for the container, allowing you to interact with it as if it were a regular terminal.
+
+if you have a container running, for example, and nginx container called `my-nginx`
+
+```bash
+docker run -p 8081:80 --name my-nginx -d nginx
+```
+
+- You can execute a command inside the container using the following command:
+
+```bash
+docker exec my-nginx ls
+```
+- You can create a new file inside the container
+
+```bash
+docker exec my-nginx touch /tmp/test.txt
+```
+- You can list the files inside the container using the following command:
+
+```bash
+docker exec my-nginx ls -l /tmp
+```
+
+This will list the files and directories inside the container's file system.
+
+- You can access the container's shell using the following command:
+
+```bash
+docker exec -it my-nginx bash
+```
+o
+
+```bash
+docker exec -it my-nginx sh
+```
+
+To exit the container's shell, you can use the `exit` command.
+
+## Ports | Puertos
+
+You can expose ports when running a container using the `-p` option. This option maps a port on the host machine to a port on the container.
+
+```bash
+docker run -p host_port:container_port image_name
+```
+- **host_port**: The port on the host machine that you want to map to the container's port. This is the port you will use to access the service running in the container.
+- **container_port**: The port on the container that the service is running on. This is the port that the service inside the container is listening to.
+- **image_name**: The name of the Docker image you want to run. This is the image that contains the service you want to access.
+
+- **docker run -p 8080:80 -d nginx**: This command runs an Nginx container and maps port 8080 on the host to port 80 on the container. You can access the Nginx server by navigating to `http://localhost:8080` in your web browser.
+
+You can also specify a range of ports to expose using the `-p` option. For example, to expose ports 8080 to 8090 on the host and map them to ports 80 to 90 on the container, you can use the following command:
+
+```bash
+docker run -p 8080-8090:80-90 -d nginx
+```
+- **8080-8090**: The range of ports on the host machine that you want to map to the container's ports.
+- **80-90**: The range of ports on the container that the service is running on. This is the range of ports that the service inside the container is listening to.
+
+You can also expose a random port on the host machine by using the `-P` option. This option automatically maps a random port on the host to the container's port.
+
+```bash
+docker run -P -d --name random-nginx nginx
+```
+- **-P**: Automatically maps a random port on the host to the container's port. This is useful if you don't care about the specific port number and just want to access the service.
+
+To find out which port was assigned, you can use the `docker ps` command or the `docker port` command. For example, to find out which port was assigned to the Nginx container, you can use the following command:
+
+```bash
+# docker port <container_name|container_id>
+docker port random-nginx
+# or
+# docker container port <container_name|container_id>
+docker container port random-nginx
+```
+
+You can also specify the protocol to use when exposing ports. By default, Docker uses TCP, but you can specify UDP or both using the following syntax:
+
+```bash
+docker run -p host_port:container_port/protocol image_name
+```
+- **protocol**: The protocol to use when exposing the ports. This can be `tcp`, `udp`, or `tcp/udp`. If not specified, Docker uses TCP by default.
+- **docker run -p 8080:80/tcp -d nginx**: This command runs an Nginx container and maps port 8080 on the host to port 80 on the container using TCP.
+
+```bash
+docker run -p 8080:80/udp -d nginx
+```
+
+This command runs an Nginx container and maps port 8080 on the host to port 80 on the container using UDP.
+
+You can also specify the IP address to bind the port to using the following syntax:
+
+```bash
+docker run -p ip_address:host_port:container_port image_name
+```
+
+- **ip_address**: The IP address on the host machine that you want to bind the port to. This is useful if you have multiple network interfaces and want to bind the port to a specific one.
+- **host_port**: The port on the host machine that you want to map to the container's port.
+- **container_port**: The port on the container that the service is running on. This is the port that the service inside the container is listening to.
+
+```bash
+docker run -p 1.2.3.4:8080:80 nginx
+```
+
+## Logs | Registros
+
+To view the logs of a container, you can use the `docker logs` command. This command shows the standard output and standard error streams of the container.
+
+```bash
+# docker logs <container_id|container_name>
+docker logs my-nginx
+```
+
+To stay see the logs in real-time, you can use the `-f` option. This option follows the logs and shows new log entries as they are written.
+
+- **-f**: Follows the logs and shows new log entries as they are written. This is useful for monitoring the logs in real-time.
+
+```bash
+docker logs -f my-nginx
+```
+- **--tail**: Shows only the last N lines of the logs. This is useful for limiting the amount of log output displayed.
+
+```bash
+docker logs --tail 10 my-nginx
+```
+- **--since**: Shows logs since a specific time. This is useful for filtering logs based on time.
+
+```bash
+docker logs --since 2023-10-01T00:00:00 my-nginx
+```
+- **--timestamps**: Shows timestamps for each log entry. This is useful for understanding when each log entry was written.
+
+```bash
+docker logs --timestamps my-nginx
+```
+- **--details**: Shows additional details for each log entry. This is useful for understanding the context of each log entry.
+
+```bash
+docker logs --details my-nginx
+```
+- **--no-log-prefix**: Disables the log prefix for each log entry. This is useful for customizing the log output.
+
+```bash
+docker logs --no-log-prefix my-nginx
+```
+
+## Inspect | Inspeccionar 
+
+To inspect a container, you can use the `docker inspect` command. This command shows detailed information about the container, including its configuration, state, network settings, and more.
+
+```bash
+docker inspect <container_id|container_name>
+```
+- **docker inspect**: Command to get detailed information about a container. It shows the container's configuration, state, network settings, and more.
+- **<container_id|container_name>**: The ID or name of the container you want to inspect. You can find the container ID or name using the `docker ps` command.
+
+```bash
+docker inspect my-nginx
+```
+
+Image inspect
+
+```bash
+docker inspect <image_id|image_name>
+```
+## Environment Variables | Variables de entorno
+
+To set environment variables when running a container, you can use the `-e` option. This option allows you to specify environment variables that will be available inside the container.
+
+```bash
+docker run -e ENV_VAR_NAME=value image_name
+```
+- **ENV_VAR_NAME**: The name of the environment variable you want to set. This is the variable that will be available inside the container.
+- **value**: The value of the environment variable you want to set. This is the value that will be assigned to the variable inside the container.
+- **image_name**: The name of the Docker image you want to run. This is the image that contains the service you want to access.
+
+- MySQL example:
+
+```bash
+docker run -p 3307:3306 -e MYSQL_ROOT_PASSWORD=ROOT -e MY_SQL_DATABASE=test --name my-mysql-3 -d mysql
+```
+
+- **MYSQL_ROOT_PASSWORD**: The name of the environment variable that sets the root password for the MySQL server. This is a required variable when running a MySQL container.
+- **my-secret-pw**: The value of the environment variable that sets the root password for the MySQL server. This is the password that will be used to access the MySQL server.
+
+## Container without services | Contenedores sin servicios
+
+There are containers that do not run any services, such as containers that only run a shell or a command. To run a container without any services, you can use the `-it` option to start an interactive shell inside the container. This allows you to run commands inside the container without starting any services.
+
+To run a container without any services, you can use the `-it` option to start an interactive shell inside the container. This allows you to run commands inside the container without starting any services.
+
+```bash
+docker run -it --name my-container ubuntu
+```
+- **-it**: Combines the `-i` and `-t` options to keep STDIN open and allocate a pseudo-TTY. This allows you to interact with the container's shell.
+- **--name my-container**: Assigns a name (my-container) to the container. This makes it easier to manage the container later, as you can refer to it by name instead of its container ID.
+- **ubuntu**: The name of the Docker image to use. In this case, it is the official Ubuntu image. If the image is not available locally, Docker will pull it from Docker Hub.
+
+
+### Note:
+
+If the container is using many flags you can change for example ```docker run -d -i -t --name my-container ubuntu``` to ```docker run -dit --name my-container ubuntu```
+- **-d**: Runs the container in detached mode, meaning it runs in the background and does not block the terminal.
+- **-i**: Keeps STDIN open even if not attached. This allows you to send input to the container.
+- **-t**: Allocates a pseudo-TTY. This creates a terminal interface for the container, allowing you to interact with it as if it were a regular terminal.
+
+```bash
+docker run -dit --name my-container ubuntu
+```
+
+
+## Volumes | Volúmenes
+
+Volumes are used to store data that needs to persist even if the container is removed. They can be shared between containers and are managed by Docker.
+
+![alt text](image.png)
+
+docker volume
+Usage:  docker volume COMMAND
+
+Manage volumes
+
+Commands:
+  create      Create a volume
+  inspect     Display detailed information on one or more volumes
+  ls          List volumes
+  prune       Remove unused local volumes
+  rm          Remove one or more volumes
+
+Run 'docker volume COMMAND --help' for more information on a command.
+
+- To create a volume, you can use the `docker volume create` command. This command creates a new volume that can be used by containers.
+
+```bash
+docker volume create my-volume
+```
+
+Options:
+
+-d, --driver string   Specify volume driver name
+-o, --opt map[=value]   Set driver-specific options
+
+```bash
+docker volume create docker-curso
+docker-curso
+root@sublime-dev-B365M-DS3H:/home/sublime-dev/dev/docker/docker-personal# docker volume inspect docker-curso
+[
+    {
+        "CreatedAt": "2025-05-21T14:52:35-05:00",
+        "Driver": "local",
+        "Labels": null,
+        "Mountpoint": "/var/lib/docker/volumes/docker-curso/_data",
+        "Name": "docker-curso",
+        "Options": null,
+        "Scope": "local"
+    }
+]
+```
+
+- To list all volumes, you can use the `docker volume ls` command. This command shows all the volumes available on your local machine.
+
+```bash
+docker volume ls
+```
+
+- To inspect a volume, you can use the `docker volume inspect` command. This command shows detailed information about the volume, including its configuration, state, and mount point.
+
+```bash
+docker volume inspect my-volume
+```
+
+- To remove a volume, you can use the `docker volume rm` command. This command removes the specified volume from your local machine.
+
+```bash
+docker volume rm my-volume
+```
+
+- To remove all unused volumes, you can use the `docker volume prune` command. This command removes all volumes that are not currently used by any containers.
+
+```bash
+docker volume prune
+```
+
+- To create a volume and mount it to a container, you can use the `-v` option when running the container. This option allows you to specify the volume to mount and the path inside the container where it will be mounted.
+
+```bash
+docker run -v my-volume:/data -d my-image
+```
+- **my-volume**: The name of the volume to mount. This is the volume that will be used by the container.
+- **/data**: The path inside the container where the volume will be mounted. This is the directory where the volume will be accessible inside the container.
+- **my-image**: The name of the Docker image to run. This is the image that contains the service you want to access.
+
+```bash
+docker run -v my-volume:/data -d --name my-container my-image
+```
+
+- MySQL example:
+
+```bash
+docker run -p 3307:3306 -e MYSQL_ROOT_PASSWORD=ROOT -e MY_SQL_DATABASE=test --name my-mysql-3 -v my-volume:/var/lib/mysql -d mysql
+```
+
+
+
+
 Módulo 2
 |
 8 clases
