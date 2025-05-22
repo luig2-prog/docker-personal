@@ -817,12 +817,45 @@ docker build -t ubuntu-with-python:v3 --build-arg="TEXT_EDITOR=vim"
 
 ### Execute services
 
-Execute services 
+Execute services
+
+Command RUN only is execute when the build the image
+
+To execute commands to run or create a container
+
+```Dockerfile
+CMD ["nginx", "-g", "daemond off;"]
+```
+
+```bash
+docker build -t ubuntu-with-python:v5
+docker run -it ubuntu-with-python:v5
+```
+if add CMD when execute docker run -it don't have output because the container is execute command CMD
 
 
-Módulo 2
-|
-8 clases
+### Entripoint vs CMD
+
+
+Directive CMD, this directive is posible override-sobreescribir
+If I do build image, then run a container executing a command this command don't should execute
+Example: 
+
+```bash
+docker build -t ubuntu-with-python:v5
+docker run -d -p 8082:80 --name ubuntu-python-v7 ubuntu-with-python:v7 ls -al
+# Logs
+docker logs ubuntu-python-v7
+# total 16
+# drwxr-xr-x 2 root root 4096 May 22 13:16 .
+# drwxr-xr-x 1 root root 4096 May 22 13:19 ..
+# -rw-rw-r-- 1 root root  646 May 22 13:14 Dockerfile
+# -rw-rw-r-- 1 root root   30 May 22 04:54 main.py
+```
+
+`ENTRYPOINT` is not override
+
+
 Contenedores
 expand_more
 done_all
