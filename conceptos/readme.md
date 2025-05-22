@@ -855,6 +855,37 @@ docker logs ubuntu-python-v7
 
 `ENTRYPOINT` is not override
 
+```bash
+ENTRYPOINT ["nginx", "-g", "daemon off;"]
+```
+### Docker python
+
+
+
+### Docker Hub
+
+1. Crear cuenta en docker hub
+
+2. Crear un repositorio llamado ubuntu-python
+
+3. Hacer login
+
+```bash
+docker login
+```
+
+4. Hacer un tag con la imagen generada
+
+```bash
+docker image tag image-name TAG
+docker image tag ubuntu-python:v12 sublimedev/ubuntu-python:v1
+```
+
+5. Subimos la imagen a docker hub
+
+```bash
+docker push sublimedev/ubuntu-python:v1
+```
 
 Contenedores
 expand_more
