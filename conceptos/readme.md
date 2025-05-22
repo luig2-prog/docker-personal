@@ -530,7 +530,294 @@ docker run -v my-volume:/data -d --name my-container my-image
 docker run -p 3307:3306 -e MYSQL_ROOT_PASSWORD=ROOT -e MY_SQL_DATABASE=test --name my-mysql-3 -v my-volume:/var/lib/mysql -d mysql
 ```
 
+### Share files between containers | Compartir archivos entre contenedores
 
+To share files between containers, you can use volumes. 
+
+Volumes allow you to share files and directories between containers, making it easy to share data and configuration files.
+
+To share a volume between two containers, you can use the `-v` option when running both containers. This option allows you to specify the same volume for both containers, making it easy to share files and directories.
+
+```bash
+docker run -v my-volume:/data -d --name container1 my-image
+docker run -v my-volume:/data -d --name container2 my-image
+```
+- **my-volume**: The name of the volume to mount. This is the volume that will be used by both containers.
+- **/data**: The path inside the container where the volume will be mounted. This is the directory where the volume will be accessible inside both containers.
+- **container1**: The name of the first container to run. This is the first container that will use the shared volume.
+- **container2**: The name of the second container to run. This is the second container that will use the shared volume.
+
+Ejemplo:
+
+```bash
+docker volume create my-volume
+docker inspect my-volume
+# Take the route and create file named test.txt
+# If the volume is created in the path /var/lib/docker/volumes/my-volume/_data
+# You can create a file named test.txt in the path /var/lib/docker/volumes/my-volume/_data
+nano /var/lib/docker/volumes/my-volume/_data/test.txt
+# Or you can create the file inside the container
+docker run -v my-volume:/data -it --name container1 ubuntu
+# Inside the container
+# Create the file
+touch /data/test.txt
+# Exit the container
+exit
+docker run -v my-volume:/data -d --name container2 ubuntu
+# Inside the container
+docker exec -it container2 bash
+# Inside the container
+ls -l /data
+# You should see the file test.txt
+```
+
+## Manual Volumes | Volúmenes manuales
+
+To create a manual volume, you can use the `-v` option when running the container. This option allows you to specify the path on the host machine where the volume will be created.
+
+```bash
+docker run -v /path/on/host:/path/in/container -d my-image
+```
+- **/path/on/host**: The path on the host machine where the volume will be created. This is the directory on the host machine that will be used as a volume.
+- **/path/in/container**: The path inside the container where the volume will be mounted. This is the directory inside the container that will be used as a volume.
+- **my-image**: The name of the Docker image to run. This is the image that contains the service you want to access.
+
+```bash
+docker run -v /home/sublime-dev/dev/docker/docker-personal:/data -d --name my-container ubuntu
+```
+- **/home/sublime-dev/dev/docker/docker-personal**: The path on the host machine where the volume will be created. This is the directory on the host machine that will be used as a volume.
+- **/data**: The path inside the container where the volume will be mounted. This is the directory inside the container that will be used as a volume.
+- **my-container**: The name of the container to run. This is the name of the container that will use the volume.
+- **ubuntu**: The name of the Docker image to run. This is the image that contains the service you want to access.
+
+```bash
+docker run -dit -v /home/sublime-dev/dev/docker-personal/conceptos/volumes:/docker-curso --name ubuntu-volume ubuntu
+```
+- **/home/sublime-dev/dev/docker-personal/conceptos/volumes**: The path on the host machine where the volume will be created. This is the directory on the host machine that will be used as a volume.
+- **/docker-curso**: The path inside the container where the volume will be mounted. This is the directory inside the container that will be used as a volume.
+- **ubuntu-volume**: The name of the container to run. This is the name of the container that will use the volume.
+- **-dit**: Runs the container in detached mode, meaning it runs in the background and does not block the terminal.
+
+We can install packages inside the container and they will be saved in the host machine.
+
+```bash
+docker run -dit -v /home/sublime-dev/dev/docker-personal/conceptos/volumes:/docker-curso --name ubuntu-volume ubuntu
+```
+
+```bash
+docker exec -it ubuntu-volume bash
+# Inside the container
+apt-get update
+apt-get install -y python3
+# Create a file inside the container with the name main.py and content print("Hello World")
+# Inside the container
+cd /docker-curso
+# Install nano
+apt-get install -y nano
+# Create the file
+nano main.py
+# Inside the file
+print("Hello World")
+# Save the file
+# Exit the container
+exit
+```
+
+```bash
+apt-get update
+apt-get install -y python3
+```
+And we can execute the command inside the container.
+
+```bash
+docker exec -it ubuntu-volume python3 /docker-curso/main.py
+```
+
+```bash
+python3
+>>> print("Hello World")
+# Hello World
+```
+
+## Networks | Redes
+
+Allow the container has Intertnet
+
+Allow the comunication througth containers, to comunications the container to container
+
+![alt text](image-1.png)
+
+Is a layer of virtual network that allow the containers comunication entre si and external world (host, internet, other machines). 
+
+### Networks Types | Tipos de Redes
+
+1. `bride` (Puente) - Default - Por defecto:
+
+```bash
+docker network ls
+```
+
+Default network when a red is not spesified. Docker create a virtual bride in the host and connect the containers in the network to this bride
+
+The containers in the same `bride` can comunicate throught si by his name of container (Docker provide solution of DNS inside). To comunicate with the external world, the trafic pass throught the bride and the network interface of the host
+
+UseCases: Ideal for single-host application, where containers need to communicate with each other, like web application with the database container
+
+Example: 
+
+```bash
+docker run --name my-app-container --network bride my-app-image
+docker run --name my-db-container --network bride my-db-image
+```
+
+`my-app-container` can communicate with `my-db-container` using the name `"my-db-container"`
+
+If you don't spesify `--network bride`, automatically is unida to the network `bride` docker defauld 
+
+2. `Host` (Host):
+
+A container that use the host network share the host's network stak of Docker. The container don't have his network space isolated
+
+The container use host IP directily and ports of the same machine of the host. If a service inside the container hear 80 port, is available of the 80 port in the host
+
+Offer better rendimiento of network-red because delete a virtual layer. Lose network isolate thougth container and host and can be there a security risk or port conflicts
+
+```bash
+docker run --name my-host-app --network host my-app-image
+```
+
+If `my-app-image` expose 80 port, is available in http://ip_host:80
+
+3. None (Ningunaa):
+
+A container with the none network don't have network interface configure.
+
+The container is isoled of the network. Cannot communicate with other containers and don't have to comunicate with the external world
+
+UseCase: Containers that not require network connection with de network-red, like file generation, outline calculos or other containers can connect to other network interfaces created mannuality
+
+```bash
+docker run --name my-isolated-task --network none my-task-image
+```
+
+### Ejemplo:
+
+```bash
+docker network create docker-curso
+```
+
+```bash
+docker network ls
+# Inspeccionamos la red
+docker inspect <network_id|network_name> 
+# Get IPAM > Config > Gateway IP
+ping GatewayIP
+```
+
+```bash
+# Create a container
+docker run -dit --network docker-curso --name ubuntu-network ubuntu
+# Create a second container
+docker run -dit --network docker-curso --name ubuntu-network-2 ubuntu
+```
+
+If do docker inspect you can see the container ubuntu-network and ubuntu-network-2 is into the same network and have IPs distinct-distintas
+
+Now can to exec it container to make ping
+
+```bash
+docker exec -it ubuntu-network bash
+# Update and install ping
+apt-get update
+apt-get install iputils-ping -y
+apt-get install net-tools -y
+```
+
+Now can to do ping into containers
+
+```bash
+ping IP
+# or
+ping container_name # Only is working when the name is asignet when running
+ping ubuntu-network-2
+```
+
+Ejemplo Host: 
+
+```bash
+docker run -d --network host --name nginx-host nginx
+```
+
+The container run on port 80 of host
+
+## Docker Images
+
+![alt text](image-2.png)
+
+Throug images can create final object using the images to building. 
+
+In Object Oriented Programing we can use class to create objects, well, the images is like a class, thougth class or image we can create multiples objets or applications
+
+To work with images we have create a file named Dockerfile, in this file configure the caracteristics to have the containers, defined the instructions to add atributes and caracteristics that we can to have the container
+
+Next we can compile a image and next create a container based in this image
+
+If go to docker hub, see images 
+
+## First image
+
+If create and execute ubuntu container 
+
+```bash
+docker run -it ubuntu
+```
+If we run `python3` or other command is not working 
+
+Go to create a ubuntu with de package installed
+
+[Dockerfile](./docker-images/ubuntu/Dockerfile)
+
+Use `docker build` to build our image
+
+```bash
+docker build -t ubuntu-with-python .
+```
+
+And now to run a container with our image use
+
+```bash
+docker run -it ubuntu-with-python
+```
+
+
+### Coping Files
+
+To copy file use de directive `COPY`
+
+We can use this command
+
+```bash
+docker build -t ubuntu-with-python:v2 .
+# run
+docker run -it ubuntu-with-python:v2
+```
+
+### Environments and Arguments
+
+Other thing can we do is define environment and arguments
+
+Environments variables containt information and can be access with de SO
+
+Arguments is variable and can be change in build-moment
+
+To use arguments is with
+```bash
+docker build -t ubuntu-with-python:v3 --build-arg="TEXT_EDITOR=vim"
+```
+
+### Execute services
+
+Execute services 
 
 
 Módulo 2
