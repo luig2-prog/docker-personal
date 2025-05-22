@@ -887,6 +887,335 @@ docker image tag ubuntu-python:v12 sublimedev/ubuntu-python:v1
 docker push sublimedev/ubuntu-python:v1
 ```
 
+### Docker Node
+
+[Dockerfile](./docker-images/node/Dockerfile)
+
+We can create a image with
+
+```bash
+docker build -t ubuntu-node:v1 .
+# show the images
+docker image ls
+# Run container
+docker run -d -p 3000:3000 --name ubuntu-node-1 ubuntu-node:v1
+# See the logs
+docker logs ubuntu-node-1
+# Entry to container
+docker exec -it ubuntu-node-1 bash
+# Execute 
+ls -l
+```
+
+## Docker Compose
+
+Docker Compose: Orquestación Simplificada de Aplicaciones Multi-Contenedor
+
+Local orquestator 
+
+Is a tool of Docker allow to define and execute multi-containers application. En lugar de execute containers individual with `docker run`, Docker compose you allow define all services, networks and volumes of your application on a file YAML (tipically called `docker-compose.yml`). Then with a one command you can up, stop, stale, etc. all your application
+
+If modified the `docker-compose.yml` and we execute again `docker compose up` Docker Compose reconoce that file is changed and re-build the image and container
+
+`docker-compose.yml`
+
+```yml
+version: '3.8' # Specifie the version format file
+
+services: #Define services of your containers
+  web:
+    image: nginx:latest
+    port:
+      - "80:80"
+    volumes:
+      - "./nginx.conf:/etc/nginx/nginx.conf"
+    depends_on:
+      - app # web depends on the app is ready
+  app:
+    build: . # Build image from Dockerfile on the actual directory
+    ports:
+      - "5000:5000"
+    environment:
+      DATABASE_URL: "mysql://user:password@db/mydatabase"
+    networks:
+      - app-network
+
+  db:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: "mysecretpassword"
+      MYSQL_DATABASE: "mydatabase"
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - app-network
+
+volumes: #Definition of the volumes
+  db_data:
+
+networks:
+  app-network:
+    driver: bride # Optional: default driver is bride
+
+```
+
+Secciones Clave:
+version: Especifica la versión del formato de archivo Compose. Es importante porque las características y la sintaxis pueden variar entre versiones (e.g., 3.8 es una versión común y recomendada).
+services: Define los contenedores que forman tu aplicación. Cada entrada bajo services representa un servicio.
+image: La imagen de Docker a usar (e.g., nginx:latest, mysql:8.0). Docker la descargará si no la tienes localmente.
+build: Especifica la ruta a un Dockerfile para construir una imagen personalizada para el servicio. Si se usa . significa el Dockerfile en el directorio actual.
+ports: Mapea puertos del contenedor al host (HOST_PORT:CONTAINER_PORT).
+volumes: Monta volúmenes para persistir datos o para compartir archivos entre el host y el contenedor. Puede ser un volumen con nombre (volume_name:/path/in/container) o un bind mount (./host/path:/path/in/container).
+environment: Define variables de entorno dentro del contenedor (clave-valor).
+depends_on: Declara dependencias entre servicios. Los servicios listados aquí se iniciarán antes que el servicio actual. Importante: Solo garantiza el orden de inicio, no que el servicio dependiente esté completamente "listo" o que su aplicación interna haya arrancado.
+networks: Conecta un servicio a una o varias redes definidas en la sección networks. Si no se especifica, se conectará a la red por defecto creada por Compose.
+container_name: Asigna un nombre específico al contenedor. Si no se define, Compose generará un nombre.
+restart: Define la política de reinicio del contenedor (e.g., always, on-failure, unless-stopped).
+volumes: Define volúmenes con nombre que pueden ser usados por los servicios para persistir datos. Docker gestionará dónde se almacenan estos volúmenes en el sistema de archivos del host.
+networks: Define redes personalizadas para que los servicios se comuniquen entre sí de forma aislada.
+
+
+### commands
+
+1. Up application (build and init)
+
+```bash
+docker compose up
+```
+- Cada vez que se ejecutamos crea una red por defecto 
+- `docker compose up` initialize all services defined on `docker-compose.yml` and you can see the logs in the terminal
+- `docker compose up -d` initialize all services on detached mode defined on `docker-compose.yml` is most common to execute 
+
+2. Stop resources (without delete resource)
+
+```bash
+docker compose stop
+```
+
+- Stop de resources without delete of. You can restart with `docker compose start`
+
+3. Stop and delete the application (containers and networks)
+
+```bash
+docker compose down
+```
+
+- Stop and delete all services and networks created with Compose
+- `docker compose down --volumes` also delete the volumes with name defined in the `docker-compose.yml` (Carefull with the existent data!)
+- `docker compose down --rmi all` also delete the images that Compose there are build to the services
+
+4. See the status of services
+
+```bash
+docker compose ps
+```
+
+- Show the containers that forman parte of your application and his status
+
+5. See logs of the service
+
+```bash
+docker compose logs <service_name>
+```
+
+`docker compose logs -f <service_name>` follow the logs in real-time
+ 
+6. Execute commands inside the container
+
+```bash
+docker compose exec <service_name> <command>
+```
+
+- Example: `docker compose exec app bash` open the shell inside of container `app`
+
+7. Build or re-build images of service
+
+```bash
+docker compose build <service_name>
+```
+- `docker compose build --no-cache` re-build image without use cache
+
+
+### Example
+
+- Ubuntu
+
+[docker-compose.yml](./docker-images/ubuntu/compose/docker-compose.yml)
+
+```yml
+# docker run -d -i -t --name ubuntu ubuntu
+version: "3.8"
+
+services:
+  ubuntu:
+    image: ubuntu
+    tty: true # Terminal - validar -it
+    container_name: ubuntu # Name
+  
+  redis:
+    image: redis
+    container_name: redis
+```
+
+#### Networks
+
+`docker-compose.yml`
+
+```yml
+# docker run -d -i -t --name ubuntu ubuntu
+version: "3.8"
+
+services:
+  ubuntu:
+    image: ubuntu
+    tty: true # Terminal - validar -it
+    container_name: ubuntu # Name
+  
+  nginx:
+    image: nginx
+    container_name: nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - test-curso
+    #  - frontend # Se agrega el contenedor a esta red - OLD
+
+  redis:
+    image: redis
+    container_name: redis
+    ports:
+      - "6379:6379"
+
+networks:
+  docker-curso:
+    external: true
+  # frontend: # OLD
+  #   external:
+  #     name: docker-curso # This network should be created
+```
+
+If the network don't exist we can create with
+
+```bash
+docker network create docker-curso
+```
+
+
+### Volumes
+
+Volumenes path
+
+Volumenes administrados por docker
+
+`docker-compose.yml`
+
+```yml
+# docker run -d -i -t --name ubuntu ubuntu
+version: "3.8"
+
+services:
+  ubuntu:
+    image: ubuntu
+    tty: true # Terminal - validar -it
+    container_name: ubuntu # Name
+    volumes:
+      - "./main.py:/main.py"
+
+  nginx:
+    image: nginx
+    container_name: nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - test-curso
+    #  - frontend # Se agrega el contenedor a esta red - OLD
+
+  redis:
+    image: redis
+    container_name: redis
+    ports:
+      - "6379:6379"
+
+  mysql:
+    image: mysql
+    container_name: mysql
+    ports:
+      - "3312:3306"
+    volumes:
+      - db-data:/var/lib/mysql
+
+volumes:
+  db-data:
+
+networks:
+  test-curso:
+    external: true
+  # frontend: # OLD
+  #   external:
+  #     name: docker-curso # This network should be created
+```
+
+### Environments
+
+We can use .env to definite environments
+
+`docker-compose.yml` 
+
+```bash
+# docker run -d -i -t --name ubuntu ubuntu
+version: "3.8"
+
+services:
+  ubuntu:
+    image: ubuntu
+    tty: true # Terminal - validar -it
+    container_name: ubuntu # Name
+    volumes:
+      - "./main.py:/main.py"
+
+  nginx:
+    image: nginx
+    container_name: nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - test-curso
+    #  - frontend # Se agrega el contenedor a esta red - OLD
+
+  redis:
+    image: redis
+    container_name: redis
+    ports:
+      - "6379:6379"
+
+  mysql:
+    image: mysql
+    container_name: mysql
+    ports:
+      - "3312:3306"
+    volumes:
+      - db-data:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+
+volumes:
+  db-data:
+
+networks:
+  test-curso:
+    external: true
+  # frontend: # OLD
+  #   external:
+  #     name: docker-curso # This network should be created
+```
+
+### Stak Local
+
+
+
 Contenedores
 expand_more
 done_all
