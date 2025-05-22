@@ -1500,55 +1500,24 @@ La parte clave es -v .:/app. Esto es un bind mount. Lo que hace es montar el con
 Cuando haces esto, los permisos del archivo entrypoint.sh que se aplican son los del archivo en tu máquina host, no los que se establecieron temporalmente durante la construcción de la imagen dentro de la capa de Docker. Si el entrypoint.sh en tu sistema Ubuntu no tiene permisos de ejecución, entonces cuando se monta en el contenedor, tampoco los tendrá.
 
 
+## Docker Portainer
 
-Instalación
+[Docker Portainer](https://docs.portainer.io/start/install-ce/server/docker/linux)
 
-done_all
-Clase 4
 
-Primer Pod
+## Docker Aplicaciones Graficas
 
-done_all
-Clase 5
+X Windows System
 
-Port Forwad
+xclock
 
-done_all
-Clase 6
+[Dockerfile](/conceptos/xclock/Dockerfile)
 
-Terminal Interactiva
+```bash
+docker build -t xclock .
 
-done_all
-Clase 7
+xhost +local:docker
 
-Eliminar pods
+docker run -d -e DISPLAY=$DISPLAY -v /tmp/.X11-unix/:/tmp/.X11-unix/ --name xclock xclock
 
-done_all
-Clase 8
-
-Logs en pods
-
-Módulo 7
-|
-4 clases
-Extras
-expand_more
-done_all
-Clase 1
-
-Consumir API Docker
-
-done_all
-Clase 2
-
-Docker Portainer
-
-done_all
-Clase 3
-
-Docker Aplicaciones Gráficas
-
-done_all
-Clase 4
-
-Entorno VSCode
+```
