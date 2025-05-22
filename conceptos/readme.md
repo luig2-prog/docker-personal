@@ -1447,6 +1447,60 @@ kubectl get pods
 
 ```
 
+### Logs en Pods
+
+```bash
+kubectl describe TYPE NAME_PREFIX
+
+
+kubectl get pods
+# NAME        READY   STATUS    RESTARTS   AGE
+# nginx-pod   1/1     Running   0          27m
+kubectl describe pods/nginx-pod
+
+```
+
+## Consumir API Docker
+
+[Docker pip](https://pypi.org/project/docker/)
+
+on 
+
+[api-docker/python](/conceptos/api-docker/python/)
+
+```bash
+docker build -t docker-api-python .
+# Con la imagen creada
+docker run -dit -v .:/app -v /var/run/docker.sock:/var/run/docker.sock docker-api-python
+# Sin la imagen creada si no con python
+docker run -dit -v .:/app -v /var/run/docker.sock:/var/run/docker.sock --name docker-api-image python
+docker exec docker-api-image pip install docker
+docker exec docker-api-image python /app/main.py
+```
+
+docker run -dit -v .:/app -v /var/run/docker.sock:/var/run/docker.sock docker-api-python
+6f0acdaaca03bb701e009087ee9053db3c0ea316c56dd75d8579c6937ad2b35e
+docker: Error response from daemon: failed to create task for container: failed to create shim task: OCI runtime create failed: runc create failed: unable to start container process: error during container init: exec: "./entrypoint.sh": permission denied: unknown
+
+Run 'docker run --help' for more information
+
+
+El error que estás viendo:
+
+docker: Error response from daemon: failed to create task for container: failed to create shim task: OCI runtime create failed: runc create failed: unable to start container process: error during container init: exec: "./entrypoint.sh": permission denied: unknown
+Es un mensaje muy claro: significa que el archivo ./entrypoint.sh no tiene permisos de ejecución dentro del contenedor cuando Docker intenta ejecutarlo.
+
+Aunque tienes la línea RUN chmod +x entrypoint.sh en tu Dockerfile, hay un detalle crucial en tu comando docker run:
+
+Bash
+
+docker run -dit -v .:/app -v /var/run/docker.sock:/var/run/docker.sock docker-api-python
+La parte clave es -v .:/app. Esto es un bind mount. Lo que hace es montar el contenido de tu directorio actual en la máquina host (.) directamente en el directorio /app dentro del contenedor.
+
+Cuando haces esto, los permisos del archivo entrypoint.sh que se aplican son los del archivo en tu máquina host, no los que se establecieron temporalmente durante la construcción de la imagen dentro de la capa de Docker. Si el entrypoint.sh en tu sistema Ubuntu no tiene permisos de ejecución, entonces cuando se monta en el contenedor, tampoco los tendrá.
+
+
+
 Instalación
 
 done_all
