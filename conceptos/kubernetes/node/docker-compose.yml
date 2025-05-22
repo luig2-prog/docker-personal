@@ -1,0 +1,48 @@
+# docker run -d -i -t --name ubuntu ubuntu
+version: "3.8"
+
+services:
+
+  my-node:
+    build:
+      context: .
+
+  python-3:
+    image: python
+    tty: true # Terminal - validar -it
+    container_name: python-3 # Name
+    volumes:
+      - ".:/scripts" #Copy all files to /scriopts inside containers
+
+  redis-3:
+    image: redis
+    container_name: redis-3
+    ports:
+      - "6380:6379"
+
+  mysql-3:
+    image: mysql
+    container_name: mysql-3
+    ports:
+      - "3313:3306"
+    volumes:
+      - db-data:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+
+  phpmyadmin-2:
+    image: phpmyadmin
+    ports:
+      - "8086:80"
+    environment:
+      - PMA_HOST=mysql-3 # Reference the mysql container
+
+volumes:
+  db-data:
+
+# networks:
+#   test-curso:
+#     external: true
+#   # frontend: # OLD
+#   #   external:
+#   #     name: docker-curso # This network should be created
