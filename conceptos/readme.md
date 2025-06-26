@@ -183,6 +183,7 @@ docker run es un alias de docker container run. Por lo tanto, ambos comandos son
 ```bash
 docker container run -p 8080:80 -d --name my-httpd httpd:2.4
 ```
+
 Is the same as:
 
 ```bash
@@ -194,6 +195,7 @@ docker run -p 8080:80 -d --name my-httpd httpd:2.4
 ```bash
 docker container ls
 ```
+
 Is the same as:
 
 ```bash
@@ -213,19 +215,21 @@ docker stop <container_id|container_name>
 ```bash
 docker start <container_id|container_name>
 ```
-**docker start**: Command to start a stopped container. It starts the container and runs the command specified in the Dockerfile or the command used to create the container.
 
+**docker start**: Command to start a stopped container. It starts the container and runs the command specified in the Dockerfile or the command used to create the container.
 
 ## Interactive mode | Modo interactivo
 
 ```bash
 docker exec container_id|container_name command
 ```
+
 **docker exec**: Command to run a command in a running container. It allows you to execute commands inside the container's environment.
 **container_id|container_name**: The ID or name of the container where you want to run the command. You can find the container ID or name using the `docker ps` command.
 **command**: The command you want to run inside the container. This can be any command that is available in the container's environment.
 
 To interact with a container and execute commands into container, you can use the `-it` option when running the container. This option combines two flags:
+
 - `-i`: Keeps STDIN open even if not attached. This allows you to send input to the container.
 - `-t`: Allocates a pseudo-TTY. This creates a terminal interface for the container, allowing you to interact with it as if it were a regular terminal.
 
@@ -240,11 +244,13 @@ docker run -p 8081:80 --name my-nginx -d nginx
 ```bash
 docker exec my-nginx ls
 ```
+
 - You can create a new file inside the container
 
 ```bash
 docker exec my-nginx touch /tmp/test.txt
 ```
+
 - You can list the files inside the container using the following command:
 
 ```bash
@@ -258,6 +264,7 @@ This will list the files and directories inside the container's file system.
 ```bash
 docker exec -it my-nginx bash
 ```
+
 o
 
 ```bash
@@ -273,6 +280,7 @@ You can expose ports when running a container using the `-p` option. This option
 ```bash
 docker run -p host_port:container_port image_name
 ```
+
 - **host_port**: The port on the host machine that you want to map to the container's port. This is the port you will use to access the service running in the container.
 - **container_port**: The port on the container that the service is running on. This is the port that the service inside the container is listening to.
 - **image_name**: The name of the Docker image you want to run. This is the image that contains the service you want to access.
@@ -284,6 +292,7 @@ You can also specify a range of ports to expose using the `-p` option. For examp
 ```bash
 docker run -p 8080-8090:80-90 -d nginx
 ```
+
 - **8080-8090**: The range of ports on the host machine that you want to map to the container's ports.
 - **80-90**: The range of ports on the container that the service is running on. This is the range of ports that the service inside the container is listening to.
 
@@ -292,6 +301,7 @@ You can also expose a random port on the host machine by using the `-P` option. 
 ```bash
 docker run -P -d --name random-nginx nginx
 ```
+
 - **-P**: Automatically maps a random port on the host to the container's port. This is useful if you don't care about the specific port number and just want to access the service.
 
 To find out which port was assigned, you can use the `docker ps` command or the `docker port` command. For example, to find out which port was assigned to the Nginx container, you can use the following command:
@@ -309,6 +319,7 @@ You can also specify the protocol to use when exposing ports. By default, Docker
 ```bash
 docker run -p host_port:container_port/protocol image_name
 ```
+
 - **protocol**: The protocol to use when exposing the ports. This can be `tcp`, `udp`, or `tcp/udp`. If not specified, Docker uses TCP by default.
 - **docker run -p 8080:80/tcp -d nginx**: This command runs an Nginx container and maps port 8080 on the host to port 80 on the container using TCP.
 
@@ -348,39 +359,45 @@ To stay see the logs in real-time, you can use the `-f` option. This option foll
 ```bash
 docker logs -f my-nginx
 ```
+
 - **--tail**: Shows only the last N lines of the logs. This is useful for limiting the amount of log output displayed.
 
 ```bash
 docker logs --tail 10 my-nginx
 ```
+
 - **--since**: Shows logs since a specific time. This is useful for filtering logs based on time.
 
 ```bash
 docker logs --since 2023-10-01T00:00:00 my-nginx
 ```
+
 - **--timestamps**: Shows timestamps for each log entry. This is useful for understanding when each log entry was written.
 
 ```bash
 docker logs --timestamps my-nginx
 ```
+
 - **--details**: Shows additional details for each log entry. This is useful for understanding the context of each log entry.
 
 ```bash
 docker logs --details my-nginx
 ```
+
 - **--no-log-prefix**: Disables the log prefix for each log entry. This is useful for customizing the log output.
 
 ```bash
 docker logs --no-log-prefix my-nginx
 ```
 
-## Inspect | Inspeccionar 
+## Inspect | Inspeccionar
 
 To inspect a container, you can use the `docker inspect` command. This command shows detailed information about the container, including its configuration, state, network settings, and more.
 
 ```bash
 docker inspect <container_id|container_name>
 ```
+
 - **docker inspect**: Command to get detailed information about a container. It shows the container's configuration, state, network settings, and more.
 - **<container_id|container_name>**: The ID or name of the container you want to inspect. You can find the container ID or name using the `docker ps` command.
 
@@ -393,6 +410,7 @@ Image inspect
 ```bash
 docker inspect <image_id|image_name>
 ```
+
 ## Environment Variables | Variables de entorno
 
 To set environment variables when running a container, you can use the `-e` option. This option allows you to specify environment variables that will be available inside the container.
@@ -400,6 +418,7 @@ To set environment variables when running a container, you can use the `-e` opti
 ```bash
 docker run -e ENV_VAR_NAME=value image_name
 ```
+
 - **ENV_VAR_NAME**: The name of the environment variable you want to set. This is the variable that will be available inside the container.
 - **value**: The value of the environment variable you want to set. This is the value that will be assigned to the variable inside the container.
 - **image_name**: The name of the Docker image you want to run. This is the image that contains the service you want to access.
@@ -422,14 +441,15 @@ To run a container without any services, you can use the `-it` option to start a
 ```bash
 docker run -it --name my-container ubuntu
 ```
+
 - **-it**: Combines the `-i` and `-t` options to keep STDIN open and allocate a pseudo-TTY. This allows you to interact with the container's shell.
 - **--name my-container**: Assigns a name (my-container) to the container. This makes it easier to manage the container later, as you can refer to it by name instead of its container ID.
 - **ubuntu**: The name of the Docker image to use. In this case, it is the official Ubuntu image. If the image is not available locally, Docker will pull it from Docker Hub.
 
-
 ### Note:
 
-If the container is using many flags you can change for example ```docker run -d -i -t --name my-container ubuntu``` to ```docker run -dit --name my-container ubuntu```
+If the container is using many flags you can change for example `docker run -d -i -t --name my-container ubuntu` to `docker run -dit --name my-container ubuntu`
+
 - **-d**: Runs the container in detached mode, meaning it runs in the background and does not block the terminal.
 - **-i**: Keeps STDIN open even if not attached. This allows you to send input to the container.
 - **-t**: Allocates a pseudo-TTY. This creates a terminal interface for the container, allowing you to interact with it as if it were a regular terminal.
@@ -438,7 +458,6 @@ If the container is using many flags you can change for example ```docker run -d
 docker run -dit --name my-container ubuntu
 ```
 
-
 ## Volumes | Volúmenes
 
 Volumes are used to store data that needs to persist even if the container is removed. They can be shared between containers and are managed by Docker.
@@ -446,16 +465,16 @@ Volumes are used to store data that needs to persist even if the container is re
 ![alt text](image.png)
 
 docker volume
-Usage:  docker volume COMMAND
+Usage: docker volume COMMAND
 
 Manage volumes
 
 Commands:
-  create      Create a volume
-  inspect     Display detailed information on one or more volumes
-  ls          List volumes
-  prune       Remove unused local volumes
-  rm          Remove one or more volumes
+create Create a volume
+inspect Display detailed information on one or more volumes
+ls List volumes
+prune Remove unused local volumes
+rm Remove one or more volumes
 
 Run 'docker volume COMMAND --help' for more information on a command.
 
@@ -467,8 +486,8 @@ docker volume create my-volume
 
 Options:
 
--d, --driver string   Specify volume driver name
--o, --opt map[=value]   Set driver-specific options
+-d, --driver string Specify volume driver name
+-o, --opt map[=value] Set driver-specific options
 
 ```bash
 docker volume create docker-curso
@@ -516,6 +535,7 @@ docker volume prune
 ```bash
 docker run -v my-volume:/data -d my-image
 ```
+
 - **my-volume**: The name of the volume to mount. This is the volume that will be used by the container.
 - **/data**: The path inside the container where the volume will be mounted. This is the directory where the volume will be accessible inside the container.
 - **my-image**: The name of the Docker image to run. This is the image that contains the service you want to access.
@@ -532,7 +552,7 @@ docker run -p 3307:3306 -e MYSQL_ROOT_PASSWORD=ROOT -e MY_SQL_DATABASE=test --na
 
 ### Share files between containers | Compartir archivos entre contenedores
 
-To share files between containers, you can use volumes. 
+To share files between containers, you can use volumes.
 
 Volumes allow you to share files and directories between containers, making it easy to share data and configuration files.
 
@@ -542,6 +562,7 @@ To share a volume between two containers, you can use the `-v` option when runni
 docker run -v my-volume:/data -d --name container1 my-image
 docker run -v my-volume:/data -d --name container2 my-image
 ```
+
 - **my-volume**: The name of the volume to mount. This is the volume that will be used by both containers.
 - **/data**: The path inside the container where the volume will be mounted. This is the directory where the volume will be accessible inside both containers.
 - **container1**: The name of the first container to run. This is the first container that will use the shared volume.
@@ -578,6 +599,7 @@ To create a manual volume, you can use the `-v` option when running the containe
 ```bash
 docker run -v /path/on/host:/path/in/container -d my-image
 ```
+
 - **/path/on/host**: The path on the host machine where the volume will be created. This is the directory on the host machine that will be used as a volume.
 - **/path/in/container**: The path inside the container where the volume will be mounted. This is the directory inside the container that will be used as a volume.
 - **my-image**: The name of the Docker image to run. This is the image that contains the service you want to access.
@@ -585,6 +607,7 @@ docker run -v /path/on/host:/path/in/container -d my-image
 ```bash
 docker run -v /home/sublime-dev/dev/docker/docker-personal:/data -d --name my-container ubuntu
 ```
+
 - **/home/sublime-dev/dev/docker/docker-personal**: The path on the host machine where the volume will be created. This is the directory on the host machine that will be used as a volume.
 - **/data**: The path inside the container where the volume will be mounted. This is the directory inside the container that will be used as a volume.
 - **my-container**: The name of the container to run. This is the name of the container that will use the volume.
@@ -593,6 +616,7 @@ docker run -v /home/sublime-dev/dev/docker/docker-personal:/data -d --name my-co
 ```bash
 docker run -dit -v /home/sublime-dev/dev/docker-personal/conceptos/volumes:/docker-curso --name ubuntu-volume ubuntu
 ```
+
 - **/home/sublime-dev/dev/docker-personal/conceptos/volumes**: The path on the host machine where the volume will be created. This is the directory on the host machine that will be used as a volume.
 - **/docker-curso**: The path inside the container where the volume will be mounted. This is the directory inside the container that will be used as a volume.
 - **ubuntu-volume**: The name of the container to run. This is the name of the container that will use the volume.
@@ -627,6 +651,7 @@ exit
 apt-get update
 apt-get install -y python3
 ```
+
 And we can execute the command inside the container.
 
 ```bash
@@ -647,7 +672,7 @@ Allow the comunication througth containers, to comunications the container to co
 
 ![alt text](image-1.png)
 
-Is a layer of virtual network that allow the containers comunication entre si and external world (host, internet, other machines). 
+Is a layer of virtual network that allow the containers comunication entre si and external world (host, internet, other machines).
 
 ### Networks Types | Tipos de Redes
 
@@ -663,7 +688,7 @@ The containers in the same `bride` can comunicate throught si by his name of con
 
 UseCases: Ideal for single-host application, where containers need to communicate with each other, like web application with the database container
 
-Example: 
+Example:
 
 ```bash
 docker run --name my-app-container --network bride my-app-image
@@ -672,7 +697,7 @@ docker run --name my-db-container --network bride my-db-image
 
 `my-app-container` can communicate with `my-db-container` using the name `"my-db-container"`
 
-If you don't spesify `--network bride`, automatically is unida to the network `bride` docker defauld 
+If you don't spesify `--network bride`, automatically is unida to the network `bride` docker defauld
 
 2. `Host` (Host):
 
@@ -709,7 +734,7 @@ docker network create docker-curso
 ```bash
 docker network ls
 # Inspeccionamos la red
-docker inspect <network_id|network_name> 
+docker inspect <network_id|network_name>
 # Get IPAM > Config > Gateway IP
 ping GatewayIP
 ```
@@ -742,7 +767,7 @@ ping container_name # Only is working when the name is asignet when running
 ping ubuntu-network-2
 ```
 
-Ejemplo Host: 
+Ejemplo Host:
 
 ```bash
 docker run -d --network host --name nginx-host nginx
@@ -754,7 +779,7 @@ The container run on port 80 of host
 
 ![alt text](image-2.png)
 
-Throug images can create final object using the images to building. 
+Throug images can create final object using the images to building.
 
 In Object Oriented Programing we can use class to create objects, well, the images is like a class, thougth class or image we can create multiples objets or applications
 
@@ -762,16 +787,17 @@ To work with images we have create a file named Dockerfile, in this file configu
 
 Next we can compile a image and next create a container based in this image
 
-If go to docker hub, see images 
+If go to docker hub, see images
 
 ## First image
 
-If create and execute ubuntu container 
+If create and execute ubuntu container
 
 ```bash
 docker run -it ubuntu
 ```
-If we run `python3` or other command is not working 
+
+If we run `python3` or other command is not working
 
 Go to create a ubuntu with de package installed
 
@@ -788,7 +814,6 @@ And now to run a container with our image use
 ```bash
 docker run -it ubuntu-with-python
 ```
-
 
 ### Coping Files
 
@@ -811,6 +836,7 @@ Environments variables containt information and can be access with de SO
 Arguments is variable and can be change in build-moment
 
 To use arguments is with
+
 ```bash
 docker build -t ubuntu-with-python:v3 --build-arg="TEXT_EDITOR=vim"
 ```
@@ -831,15 +857,14 @@ CMD ["nginx", "-g", "daemond off;"]
 docker build -t ubuntu-with-python:v5
 docker run -it ubuntu-with-python:v5
 ```
-if add CMD when execute docker run -it don't have output because the container is execute command CMD
 
+if add CMD when execute docker run -it don't have output because the container is execute command CMD
 
 ### Entripoint vs CMD
 
-
 Directive CMD, this directive is posible override-sobreescribir
 If I do build image, then run a container executing a command this command don't should execute
-Example: 
+Example:
 
 ```bash
 docker build -t ubuntu-with-python:v5
@@ -858,9 +883,8 @@ docker logs ubuntu-python-v7
 ```bash
 ENTRYPOINT ["nginx", "-g", "daemon off;"]
 ```
+
 ### Docker python
-
-
 
 ### Docker Hub
 
@@ -887,248 +911,613 @@ docker image tag ubuntu-python:v12 sublimedev/ubuntu-python:v1
 docker push sublimedev/ubuntu-python:v1
 ```
 
-Contenedores
-expand_more
-done_all
-Clase 1
+### Docker Node
+
+[Dockerfile](./docker-images/node/Dockerfile)
+
+We can create a image with
+
+```bash
+docker build -t ubuntu-node:v1 .
+# show the images
+docker image ls
+# Run container
+docker run -d -p 3000:3000 --name ubuntu-node-1 ubuntu-node:v1
+# See the logs
+docker logs ubuntu-node-1
+# Entry to container
+docker exec -it ubuntu-node-1 bash
+# Execute
+ls -l
+```
+
+## Docker Compose
+
+Docker Compose: Orquestación Simplificada de Aplicaciones Multi-Contenedor
+
+Local orquestator
+
+Is a tool of Docker allow to define and execute multi-containers application. En lugar de execute containers individual with `docker run`, Docker compose you allow define all services, networks and volumes of your application on a file YAML (tipically called `docker-compose.yml`). Then with a one command you can up, stop, stale, etc. all your application
+
+If modified the `docker-compose.yml` and we execute again `docker compose up` Docker Compose reconoce that file is changed and re-build the image and container
+
+`docker-compose.yml`
+
+```yml
+version: "3.8" # Specifie the version format file
+
+services: #Define services of your containers
+  web:
+    image: nginx:latest
+    port:
+      - "80:80"
+    volumes:
+      - "./nginx.conf:/etc/nginx/nginx.conf"
+    depends_on:
+      - app # web depends on the app is ready
+  app:
+    build: . # Build image from Dockerfile on the actual directory
+    ports:
+      - "5000:5000"
+    environment:
+      DATABASE_URL: "mysql://user:password@db/mydatabase"
+    networks:
+      - app-network
 
-Comandos Básicos
+  db:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: "mysecretpassword"
+      MYSQL_DATABASE: "mydatabase"
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - app-network
 
-done_all
-Clase 2
+volumes: #Definition of the volumes
+  db_data:
 
-Contenedores en Segundo Plano
+networks:
+  app-network:
+    driver: bride # Optional: default driver is bride
+```
 
-done_all
-Clase 3
+Secciones Clave:
+version: Especifica la versión del formato de archivo Compose. Es importante porque las características y la sintaxis pueden variar entre versiones (e.g., 3.8 es una versión común y recomendada).
+services: Define los contenedores que forman tu aplicación. Cada entrada bajo services representa un servicio.
+image: La imagen de Docker a usar (e.g., nginx:latest, mysql:8.0). Docker la descargará si no la tienes localmente.
+build: Especifica la ruta a un Dockerfile para construir una imagen personalizada para el servicio. Si se usa . significa el Dockerfile en el directorio actual.
+ports: Mapea puertos del contenedor al host (HOST_PORT:CONTAINER_PORT).
+volumes: Monta volúmenes para persistir datos o para compartir archivos entre el host y el contenedor. Puede ser un volumen con nombre (volume_name:/path/in/container) o un bind mount (./host/path:/path/in/container).
+environment: Define variables de entorno dentro del contenedor (clave-valor).
+depends_on: Declara dependencias entre servicios. Los servicios listados aquí se iniciarán antes que el servicio actual. Importante: Solo garantiza el orden de inicio, no que el servicio dependiente esté completamente "listo" o que su aplicación interna haya arrancado.
+networks: Conecta un servicio a una o varias redes definidas en la sección networks. Si no se especifica, se conectará a la red por defecto creada por Compose.
+container_name: Asigna un nombre específico al contenedor. Si no se define, Compose generará un nombre.
+restart: Define la política de reinicio del contenedor (e.g., always, on-failure, unless-stopped).
+volumes: Define volúmenes con nombre que pueden ser usados por los servicios para persistir datos. Docker gestionará dónde se almacenan estos volúmenes en el sistema de archivos del host.
+networks: Define redes personalizadas para que los servicios se comuniquen entre sí de forma aislada.
 
-Modo Interactivo
+### commands
 
-done_all
-Clase 4
+1. Up application (build and init)
 
-Puertos
+```bash
+docker compose up
+```
 
-done_all
-Clase 5
+- Cada vez que se ejecutamos crea una red por defecto
+- `docker compose up` initialize all services defined on `docker-compose.yml` and you can see the logs in the terminal
+- `docker compose up -d` initialize all services on detached mode defined on `docker-compose.yml` is most common to execute
+
+2. Stop resources (without delete resource)
 
-Logs
+```bash
+docker compose stop
+```
 
-done_all
-Clase 6
+- Stop de resources without delete of. You can restart with `docker compose start`
 
-Inspeccionar Contenedores
+3. Stop and delete the application (containers and networks)
 
-done_all
-Clase 7
+```bash
+docker compose down
+```
 
-Variables de Entorno
+- Stop and delete all services and networks created with Compose
+- `docker compose down --volumes` also delete the volumes with name defined in the `docker-compose.yml` (Carefull with the existent data!)
+- `docker compose down --rmi all` also delete the images that Compose there are build to the services
 
-done_all
-Clase 8
+4. See the status of services
 
-Contenedores sin servicios
+```bash
+docker compose ps
+```
 
-Módulo 3
-|
-7 clases
-Redes y Volúmenes
-expand_more
-done_all
-Clase 1
+- Show the containers that forman parte of your application and his status
 
-Qué son los Volúmenes
+5. See logs of the service
 
-done_all
-Clase 2
+```bash
+docker compose logs <service_name>
+```
 
-Volúmenes de Docker
+`docker compose logs -f <service_name>` follow the logs in real-time
 
-done_all
-Clase 3
+6. Execute commands inside the container
 
-Compartir Archivos entre Contenedores
+```bash
+docker compose exec <service_name> <command>
+```
 
-done_all
-Clase 4
+- Example: `docker compose exec app bash` open the shell inside of container `app`
 
-Volúmenes Manuales
+7. Build or re-build images of service
 
-done_all
-Clase 5
+```bash
+docker compose build <service_name>
+```
 
-Redes
+- `docker compose build --no-cache` re-build image without use cache
 
-done_all
-Clase 6
+### Example
 
-Conectando Contenedor a Red
+- Ubuntu
 
-done_all
-Clase 7
+[docker-compose.yml](./docker-images/ubuntu/compose/docker-compose.yml)
 
-Red hosts
+```yml
+# docker run -d -i -t --name ubuntu ubuntu
+version: "3.8"
 
-Módulo 4
-|
-9 clases
-Imágenes
-expand_more
-done_all
-Clase 1
+services:
+  ubuntu:
+    image: ubuntu
+    tty: true # Terminal - validar -it
+    container_name: ubuntu # Name
 
-Qué son las Imágenes
+  redis:
+    image: redis
+    container_name: redis
+```
 
-done_all
-Clase 2
+#### Networks
 
-Primer Imagen
+`docker-compose.yml`
 
-done_all
-Clase 3
+```yml
+# docker run -d -i -t --name ubuntu ubuntu
+version: "3.8"
 
-Copiando Archivos
+services:
+  ubuntu:
+    image: ubuntu
+    tty: true # Terminal - validar -it
+    container_name: ubuntu # Name
 
-done_all
-Clase 4
+  nginx:
+    image: nginx
+    container_name: nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - test-curso
+    #  - frontend # Se agrega el contenedor a esta red - OLD
 
-Variables de Entono
+  redis:
+    image: redis
+    container_name: redis
+    ports:
+      - "6379:6379"
+
+networks:
+  docker-curso:
+    external: true
+  # frontend: # OLD
+  #   external:
+  #     name: docker-curso # This network should be created
+```
+
+If the network don't exist we can create with
+
+```bash
+docker network create docker-curso
+```
+
+### Volumes
+
+Volumenes path
+
+Volumenes administrados por docker
+
+`docker-compose.yml`
+
+```yml
+# docker run -d -i -t --name ubuntu ubuntu
+version: "3.8"
+
+services:
+  ubuntu:
+    image: ubuntu
+    tty: true # Terminal - validar -it
+    container_name: ubuntu # Name
+    volumes:
+      - "./main.py:/main.py"
+
+  nginx:
+    image: nginx
+    container_name: nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - test-curso
+    #  - frontend # Se agrega el contenedor a esta red - OLD
+
+  redis:
+    image: redis
+    container_name: redis
+    ports:
+      - "6379:6379"
+
+  mysql:
+    image: mysql
+    container_name: mysql
+    ports:
+      - "3312:3306"
+    volumes:
+      - db-data:/var/lib/mysql
+
+volumes:
+  db-data:
+
+networks:
+  test-curso:
+    external: true
+  # frontend: # OLD
+  #   external:
+  #     name: docker-curso # This network should be created
+```
+
+### Environments
+
+We can use .env to definite environments
+
+`docker-compose.yml`
+
+```bash
+# docker run -d -i -t --name ubuntu ubuntu
+version: "3.8"
+
+services:
+  ubuntu:
+    image: ubuntu
+    tty: true # Terminal - validar -it
+    container_name: ubuntu # Name
+    volumes:
+      - "./main.py:/main.py"
+
+  nginx:
+    image: nginx
+    container_name: nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - test-curso
+    #  - frontend # Se agrega el contenedor a esta red - OLD
+
+  redis:
+    image: redis
+    container_name: redis
+    ports:
+      - "6379:6379"
+
+  mysql:
+    image: mysql
+    container_name: mysql
+    ports:
+      - "3312:3306"
+    volumes:
+      - db-data:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
 
-done_all
-Clase 5
+volumes:
+  db-data:
 
-Ejecutar Servicios
+networks:
+  test-curso:
+    external: true
+  # frontend: # OLD
+  #   external:
+  #     name: docker-curso # This network should be created
+```
 
-done_all
-Clase 6
+### Stak Local
 
-Entrypoint vs CMD
+```yml
+# docker run -d -i -t --name ubuntu ubuntu
+version: "3.8"
 
-done_all
-Clase 7
+services:
+  python:
+    image: python
+    tty: true # Terminal - validar -it
+    container_name: python # Name
+    volumes:
+      - ".:/scripts" #Copy all files to /scriopts inside containers
 
-Dokerizar script python
+  redis-2:
+    image: redis
+    container_name: redis-2
+    ports:
+      - "6379:6379"
 
-done_all
-Clase 8
+  mysql-2:
+    image: mysql
+    container_name: mysql-2
+    ports:
+      - "3312:3306"
+    volumes:
+      - db-data:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
 
-docker hub
+  phpmyadmin:
+    image: phpmyadmin
+    ports:
+      - "8085:80"
+    environment:
+      - PMA_HOST=mysql-2 # Reference the mysql container
 
-done_all
-Clase 9
+volumes:
+  db-data:
+# networks:
+#   test-curso:
+#     external: true
+#   # frontend: # OLD
+#   #   external:
+#   #     name: docker-curso # This network should be created
+```
 
-Dockerizar script node
+### Docker Compose Build
 
-check_circle_outline
-Módulo 5
-|
-7 clases
+Can reference a `Dockerfile` in a `docker-compose.yml`
 
-|
-7 clases
-Docker Compose
-expand_more
-done_all
-Clase 1
+[docker-compose.yml](/conceptos/docker-images/node/docker-compose.yml)
 
-Qué es Docker Compose
+```yml
+my-node:
+  build:
+    context: . ## With context . is indicate to Docker that my Dockerfile is in current directory
+```
 
-done_all
-Clase 2
+## Orquestadores
 
-Servicios
+We can to execute containers to big scale
 
-done_all
-Clase 3
+- Docker swarm - Descontinuada
 
-Redes
+- Apache MESOS
 
-done_all
-Clase 4
+- Kubernetes/k8s - Principal o mas destacados
 
-Volúmenes
+![alt text](image-3.png)
 
-done_all
-Clase 5
+![alt text](image-4.png)
 
-Variables de Entorno
+Name of conjunt of containers is called `cluster`.
 
-done_all
-Clase 6
+Clusters: is conformate to 1 or more servers o virtual machines
 
-Stack Local
+### Control Plane
 
-done_all
-Clase 7
+- kube-apiserver: Expose a api-rest or kukectl
 
-Docker Compose Build
+kubectl
 
-Módulo 6
-|
-8 clases
-Introducción Kubernetes
-expand_more
-done_all
-Clase 1
+- kube-scheduler: Agendar o programar deploiments
 
-Qué son los Orquestadores
+- kube-controller-manager
 
-done_all
-Clase 2
+etcd -> BD oriented to distribuide system
 
-Conceptos Básicos
+### Compute machines
 
-done_all
-Clase 3
+Nodos workers, is a finall machine that execute container
 
-Instalación
+- kubelet: Agent that report to master node the healtcheck of the containers, if one stopped or is correct execute
 
-done_all
-Clase 4
+- kube-proxy:
 
-Primer Pod
+#### Container Runtime
 
-done_all
-Clase 5
+Don't interactive with container.
 
-Port Forwad
+We can execute containers with Pod, inside Pod we can execute 1 or more containers
 
-done_all
-Clase 6
+### Instalation
 
-Terminal Interactiva
+Instalar Kubernetes en tu máquina local Ubuntu para fines de desarrollo y pruebas es un proceso común. Hay varias opciones, y las más populares y recomendadas para un entorno local son:
 
-done_all
-Clase 7
+- MicroK8s: Es una distribución de Kubernetes ligera y de código abierto de Canonical (la empresa detrás de Ubuntu). Es fácil de instalar y usar, ideal para desarrollo y pruebas en un solo nodo.
+- Minikube: Otra opción popular para ejecutar un clúster de Kubernetes de un solo nodo en una máquina local. Crea una máquina virtual (VM) en tu sistema y despliega un clúster de Kubernetes dentro de ella.
+- Kind (Kubernetes in Docker): Permite ejecutar clústeres de Kubernetes dentro de contenedores Docker. Es ideal para probar Kubernetes en entornos de CI/CD o para aquellos que ya están familiarizados con Docker.
 
-Eliminar pods
+En mi caso instalé Kind y kubectl
 
-done_all
-Clase 8
+Creamos un cluster
 
-Logs en pods
+```bash
+kind create cluster
+# Validamos docker
+docker ps
+# CONTAINER ID   IMAGE                  COMMAND                  CREATED             STATUS             PORTS                                                    NAMES
+# 3f1caba9b805   kindest/node:v1.33.1   "/usr/local/bin/entr…"   56 seconds ago      Up 54 seconds      127.0.0.1:39485->6443/tcp                                kind-control-plane
 
-Módulo 7
-|
-4 clases
-Extras
-expand_more
-done_all
-Clase 1
+# Validamos los nodos
+kubectl get nodes
+# NAME                 STATUS   ROLES           AGE   VERSION
+# kind-control-plane   Ready    control-plane   67s   v1.33.1
+```
 
-Consumir API Docker
+- Ejecutar un pod
 
-done_all
-Clase 2
+```bash
+kubectl run nginx-pod --image nginx
+# Validamos el pod
+kubectl get pod
+# NAME        READY   STATUS    RESTARTS   AGE
+# nginx-pod   1/1     Running   0          11s
+kubectl get pod -o wide
+# NAME        READY   STATUS    RESTARTS   AGE   IP           NODE                 NOMINATED NODE   READINESS GATES
+# nginx-pod   1/1     Running   0          15s   10.244.0.5   kind-control-plane   <none>           <none>
+docker ps
+# CONTAINER ID   IMAGE                  COMMAND                  CREATED             STATUS             PORTS                                                    NAMES
+# 3f1caba9b805   kindest/node:v1.33.1   "/usr/local/bin/entr…"   5 minutes ago       Up 5 minutes       127.0.0.1:39485->6443/tcp                                kind-control-plane
+```
 
-Docker Portainer
+We can create a file configure, se recomienda para ejecutar
 
-done_all
-Clase 3
+[nginx-pod.yml](/conceptos/kubernetes/node/nginx-pod.yml)
 
-Docker Aplicaciones Gráficas
+```bash
+kubectl apply -f nginx-pod.yml
+```
 
-done_all
-Clase 4
+-f parametro nombre del archivo
 
-Entorno VSCode
+### Port Forwad
+
+We allow access to content that we have inside the container
+
+```bash
+kubectl port-forward nginx-pod 8181:80
+```
+
+8081 host acceder
+80 expone el contenedor
+
+### Terminal Interactiva
+
+Go to inside to container
+
+```bash
+kubectl get pods
+# NAME          READY   STATUS    RESTARTS   AGE
+# nginx-pod     1/1     Running   0          20m
+# nginx-pod-1   1/1     Running   0          10m
+kubectl exec -it nginx-pod -- bash
+```
+
+### Eliminar un pod
+
+explain Get documentation for a resource
+get Display one or many resources
+edit Edit a resource on the server
+delete Delete resources by file names, stdin, resources and names, or by resources and label selector
+
+```bash
+# Elimando validando el pod
+kubectl get pods
+# NAME          READY   STATUS    RESTARTS   AGE
+# nginx-pod     1/1     Running   0          26m
+# nginx-pod-1   1/1     Running   0          16m
+kubectl delete <kind> <pod_name>
+kubectl delete pod nginx-pod-1
+# pod "nginx-pod-1" deleted
+kubectl get pods
+# NAME        READY   STATUS    RESTARTS   AGE
+# nginx-pod   1/1     Running   0          27m
+
+# ======
+# Eliminando por medio del archivo
+kubectl apply -f nginx-pod.yml
+# pod/nginx-pod-1 created
+kubectl get pods
+# NAME          READY   STATUS    RESTARTS   AGE
+# nginx-pod     1/1     Running   0          27m
+# nginx-pod-1   1/1     Running   0          3s
+kubectl delete -f nginx-pod.yml
+# pod "nginx-pod-1" deleted
+kubectl get pods
+# NAME        READY   STATUS    RESTARTS   AGE
+# nginx-pod   1/1     Running   0          27m
+
+```
+
+### Logs en Pods
+
+```bash
+kubectl describe TYPE NAME_PREFIX
+
+
+kubectl get pods
+# NAME        READY   STATUS    RESTARTS   AGE
+# nginx-pod   1/1     Running   0          27m
+kubectl describe pods/nginx-pod
+
+```
+
+## Consumir API Docker
+
+[Docker pip](https://pypi.org/project/docker/)
+
+on 
+
+[api-docker/python](/conceptos/api-docker/python/)
+
+```bash
+docker build -t docker-api-python .
+# Con la imagen creada
+docker run -dit -v .:/app -v /var/run/docker.sock:/var/run/docker.sock docker-api-python
+# Sin la imagen creada si no con python
+docker run -dit -v .:/app -v /var/run/docker.sock:/var/run/docker.sock --name docker-api-image python
+docker exec docker-api-image pip install docker
+docker exec docker-api-image python /app/main.py
+```
+
+docker run -dit -v .:/app -v /var/run/docker.sock:/var/run/docker.sock docker-api-python
+6f0acdaaca03bb701e009087ee9053db3c0ea316c56dd75d8579c6937ad2b35e
+docker: Error response from daemon: failed to create task for container: failed to create shim task: OCI runtime create failed: runc create failed: unable to start container process: error during container init: exec: "./entrypoint.sh": permission denied: unknown
+
+Run 'docker run --help' for more information
+
+
+El error que estás viendo:
+
+docker: Error response from daemon: failed to create task for container: failed to create shim task: OCI runtime create failed: runc create failed: unable to start container process: error during container init: exec: "./entrypoint.sh": permission denied: unknown
+Es un mensaje muy claro: significa que el archivo ./entrypoint.sh no tiene permisos de ejecución dentro del contenedor cuando Docker intenta ejecutarlo.
+
+Aunque tienes la línea RUN chmod +x entrypoint.sh en tu Dockerfile, hay un detalle crucial en tu comando docker run:
+
+Bash
+
+docker run -dit -v .:/app -v /var/run/docker.sock:/var/run/docker.sock docker-api-python
+La parte clave es -v .:/app. Esto es un bind mount. Lo que hace es montar el contenido de tu directorio actual en la máquina host (.) directamente en el directorio /app dentro del contenedor.
+
+Cuando haces esto, los permisos del archivo entrypoint.sh que se aplican son los del archivo en tu máquina host, no los que se establecieron temporalmente durante la construcción de la imagen dentro de la capa de Docker. Si el entrypoint.sh en tu sistema Ubuntu no tiene permisos de ejecución, entonces cuando se monta en el contenedor, tampoco los tendrá.
+
+
+## Docker Portainer
+
+[Docker Portainer](https://docs.portainer.io/start/install-ce/server/docker/linux)
+
+
+## Docker Aplicaciones Graficas
+
+X Windows System
+
+xclock
+
+[Dockerfile](/conceptos/xclock/Dockerfile)
+
+```bash
+docker build -t xclock .
+
+xhost +local:docker
+
+docker run -d -e DISPLAY=$DISPLAY -v /tmp/.X11-unix/:/tmp/.X11-unix/ --name xclock xclock
+
+```
