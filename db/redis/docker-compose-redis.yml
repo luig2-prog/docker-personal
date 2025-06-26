@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  redis:
+    # Usa la imagen oficial de Redis
+    image: redis:latest
+    # Asigna un nombre al contenedor para que sea fácil de identificar
+    container_name: mi-redis-server
+    # Mapea el puerto 6379 del contenedor al 6379 del host
+    ports:
+      - "6379:6379"
+    # Reinicia el contenedor si se detiene por algún error
+    restart: always
+    # Persiste los datos de Redis en un volumen
+    volumes:
+      - redis-data:/data
+
+# Define los volúmenes para la persistencia de datos
+volumes:
+  redis-data:
+    driver: local
